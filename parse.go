@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/dgoldstein1/crawler/db"
 	"os"
 	"regexp"
@@ -49,12 +48,11 @@ func cleanWord(w string) string {
 
 // adds neccesary nodes and edges to e
 func addEdge(currWord string, nextWord string) error {
-	neighborsAdded, err := db.AddEdgesIfDoNotExist(
+	_, err := db.AddEdgesIfDoNotExist(
 		currWord,
 		[]string{nextWord},
 		cleanWord,
 		"",
 	)
-	fmt.Println(neighborsAdded)
 	return err
 }
