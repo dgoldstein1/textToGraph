@@ -9,6 +9,7 @@ import (
 
 // checks environment for required env vars
 var logFatalf = log.Fatalf
+var logErrorf = log.Errorf
 var logMsg = log.Infof
 
 func parseEnv(fileLocation string) {
@@ -50,6 +51,7 @@ func run(fileLocation string) {
 	// assert environment
 	parseEnv(fileLocation)
 	// start parser
+	Parse(fileLocation)
 }
 
 func main() {

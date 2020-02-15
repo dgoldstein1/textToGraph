@@ -88,27 +88,37 @@ func TestParse(t *testing.T) {
 }
 
 func TestIndexWords(t *testing.T) {
+	origLogErrorf := logErrorf
+	defer func() { logErrorf = origLogErrorf }()
+	errors := []string{}
+	logErrorf = func(format string, args ...interface{}) {
+		if len(args) > 0 {
+			errors = append(errors, fmt.Sprintf(format, args))
+		} else {
+			errors = append(errors, format)
+		}
+	}
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	simpleFile, _ := os.Open("./data/simple.txt")
 	badResponse, _ := os.Open("./data/badResponse.txt")
 
 	testTable := []struct {
-		Name          string
-		file          *os.File
-		expectedError string
+		Name             string
+		file             *os.File
+		lenexpectedError int
 	}{
-		{"reads all words in correctly", simpleFile, ""},
-		{"unsuccessful response from back end", badResponse, "Could not find node on reverse lookup"},
+		{"reads all words in correctly", simpleFile, 0},
+		{"unsuccessful response from back end", badResponse, 1},
 	}
 	for _, tc := range testTable {
-		_mockOutCalls()
-		err := indexWords(tc.file)
-		if err != nil {
-			assert.Equal(t, tc.expectedError, err.Error())
-		} else {
-			assert.Equal(t, tc.expectedError, "")
-		}
+		t.Run(tc.Name, func(t *testing.T) {
+			_mockOutCalls()
+			errors = []string{}
+			indexWords(tc.file)
+			assert.Equal(t, tc.lenexpectedError, len(errors))
+
+		})
 	}
 }
 

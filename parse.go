@@ -30,7 +30,7 @@ func indexWords(file *os.File) error {
 		// add edge if there is one
 		if currWord != "" {
 			if err := addEdge(currWord, nextWord); err != nil {
-				return err
+				logErrorf("could not add edge %s to %s: %v", currWord, nextWord, err)
 			}
 		}
 		// update words
