@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -29,7 +30,30 @@ func TestParse(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			errors = []string{}
 			Parse(tc.filePath)
-			assert.Equal(t, len(errors), tc.expectedNumberOfErrors)
+			assert.Equal(t, tc.expectedNumberOfErrors, len(errors))
 		})
+	}
+}
+
+func TestIndexWords(t *testing.T) {
+	simpleFile, err := os.Open("./data/simple.txt")
+	if err != nil {
+		t.Errorf("Could not open simple file: %v", err)
+	}
+
+	testTable := []struct {
+		Name          string
+		file          *os.File
+		expectedError string
+	}{
+		{"reads all words in correctly", simpleFile, ""},
+	}
+	for _, tc := range testTable {
+		err := indexWords(tc.file)
+		if err != nil {
+			assert.Equal(t, tc.expectedError, err.Error())
+		} else {
+			assert.Equal(t, tc.expectedError, "")
+		}
 	}
 }
