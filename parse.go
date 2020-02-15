@@ -23,15 +23,24 @@ func indexWords(file *os.File) error {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanWords)
+	currWord, nextWord := "", ""
 	for scanner.Scan() {
-		cleanWord(scanner.Text())
+		nextWord = cleanWord(scanner.Text())
+		// add edge
+		if currWord != "" {
+			if err := addEdge(currWord, nextWord); err != nil {
+				return err
+			}
+		}
+		// update words
+		currWord = nextWord
 	}
 	return nil
 }
 
-// cleans punctuation, capitalization, etc out of words
 var reg, _ = regexp.Compile("[^a-zA-Z0-9]+")
 
+// cleans punctuation, capitalization, etc out of words
 func cleanWord(w string) string {
 	return strings.ToLower(reg.ReplaceAllString(w, ""))
 }
