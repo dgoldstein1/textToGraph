@@ -3,7 +3,6 @@ module github.com/dgoldstein1/textToGraph
 go 1.13
 
 require (
-	github.com/davecgh/go-spew v1.1.1
 	github.com/dgoldstein1/crawler v0.0.0-20200205210859-9cc658ff7add
 	github.com/jarcoal/httpmock v1.0.4
 	github.com/sirupsen/logrus v1.4.2
