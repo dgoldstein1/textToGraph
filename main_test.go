@@ -46,36 +46,42 @@ func TestParseEnv(t *testing.T) {
 		os.Setenv(v, "5")
 	}
 	// positive test
-	parseEnv()
+	parseEnv("test")
 	assert.Equal(t, len(errors), 0)
 
 	for _, v := range requiredEnvs {
 		t.Run("it validates "+v, func(t *testing.T) {
 			errors = []string{}
 			os.Unsetenv(v)
-			parseEnv()
+			parseEnv("test")
 			assert.Equal(t, len(errors) > 0, true)
 			// cleanup
 			os.Setenv(v, "5")
 		})
 	}
 
+	t.Run("fails if no file passed", func(t *testing.T) {
+		errors = []string{}
+		parseEnv("")
+		assert.Equal(t, 1, len(errors))
+	})
+
 	t.Run("fails if MAX_APPROX_NODES is not valid int", func(t *testing.T) {
 		errors = []string{}
 		os.Setenv("MAX_APPROX_NODES", "f232")
-		parseEnv()
+		parseEnv("test")
 		assert.Equal(t, 2, len(errors))
 	})
 	t.Run("fails if MAX_APPROX_NODES is not a positive int", func(t *testing.T) {
 		errors = []string{}
 		os.Setenv("MAX_APPROX_NODES", "-253")
-		parseEnv()
+		parseEnv("test")
 		assert.Equal(t, 1, len(errors))
 	})
 	t.Run("throws no errors if MAX_APPROX_NODES is '-1'", func(t *testing.T) {
 		errors = []string{}
 		os.Setenv("MAX_APPROX_NODES", "-1")
-		parseEnv()
+		parseEnv("test")
 		assert.Equal(t, 0, len(errors))
 	})
 }

@@ -11,7 +11,11 @@ import (
 var logFatalf = log.Fatalf
 var logMsg = log.Infof
 
-func parseEnv() {
+func parseEnv(fileLocation string) {
+	if fileLocation == "" {
+		logFatalf("no file specified")
+	}
+
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp: true,
 	})
@@ -42,17 +46,17 @@ func parseEnv() {
 }
 
 // runs with metrics
-func run() {
+func run(fileLocation string) {
 	// assert environment
-	parseEnv()
+	parseEnv(fileLocation)
 	// start parser
 }
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "crawler"
-	app.Usage = " acustomizable web crawler script for different websites"
-	app.Description = "web crawl different URLs and add similar urls to a graph database"
+	app.Name = "textToGraph"
+	app.Usage = " a customizable indexer for .txt documents into a biggraph database"
+	app.Description = "Parses each word in large files delimited by an empty string, and indexes them into a large scale graph database"
 	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
 		{
@@ -60,7 +64,7 @@ func main() {
 			Aliases: []string{"p"},
 			Usage:   "parse all lines in text file and add each word to graph",
 			Action: func(c *cli.Context) error {
-				run()
+				run(c.Args().Get(0))
 				return nil
 			},
 		},
