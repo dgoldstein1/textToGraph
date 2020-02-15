@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/dgoldstein1/crawler/db"
 	"os"
 	"regexp"
 	"strings"
@@ -26,7 +28,7 @@ func indexWords(file *os.File) error {
 	currWord, nextWord := "", ""
 	for scanner.Scan() {
 		nextWord = cleanWord(scanner.Text())
-		// add edge
+		// add edge if there is one
 		if currWord != "" {
 			if err := addEdge(currWord, nextWord); err != nil {
 				return err
@@ -47,5 +49,12 @@ func cleanWord(w string) string {
 
 // adds neccesary nodes and edges to e
 func addEdge(currWord string, nextWord string) error {
-	return nil
+	neighborsAdded, err := db.AddEdgesIfDoNotExist(
+		currWord,
+		[]string{nextWord},
+		cleanWord,
+		"",
+	)
+	fmt.Println(neighborsAdded)
+	return err
 }
