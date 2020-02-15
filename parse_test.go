@@ -1,39 +1,81 @@
 package main
 
 import (
-	"fmt"
+	"github.com/dgoldstein1/crawler/db"
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"testing"
 )
 
-func TestParse(t *testing.T) {
-	// mock out log.Fatalf
-	origLogFatalf := logFatalf
-	defer func() { logFatalf = origLogFatalf }()
-	errors := []string{}
-	logFatalf = func(format string, args ...interface{}) {
-		if len(args) > 0 {
-			errors = append(errors, fmt.Sprintf(format, args))
-		} else {
-			errors = append(errors, format)
-		}
-	}
-	testTable := []struct {
-		name                   string
-		filePath               string
-		expectedNumberOfErrors int
-	}{
-		{"file does not exist", "./sdfsdf.txt", 1},
-	}
-	for _, tc := range testTable {
-		t.Run(tc.name, func(t *testing.T) {
-			errors = []string{}
-			Parse(tc.filePath)
-			assert.Equal(t, tc.expectedNumberOfErrors, len(errors))
-		})
+var dbEndpoint = "http://localhost:17474"
+var twoWayEndpoint = "http://localhost:17475"
+
+func _mockOutCalls(success bool) {
+	httpmock.Activate()
+	os.Setenv("GRAPH_DB_ENDPOINT", dbEndpoint)
+	os.Setenv("TWO_WAY_KV_ENDPOINT", twoWayEndpoint)
+	if success {
+		// mock out DB call
+		httpmock.RegisterResponder("POST", dbEndpoint+"/edges?node=1",
+			func(req *http.Request) (*http.Response, error) {
+				return httpmock.NewJsonResponse(200, map[string]interface{}{"neighborsAdded": []int{2, 3, 4}})
+			},
+		)
+		// mock out metadata call
+		httpmock.RegisterResponder("POST", twoWayEndpoint+"/entries",
+			func(req *http.Request) (*http.Response, error) {
+				return httpmock.NewJsonResponse(200, map[string]interface{}{
+					"errors": []string{"test"},
+					"entries": []db.TwoWayEntry{
+						db.TwoWayEntry{"test", 1},
+						db.TwoWayEntry{"test1", 2},
+						db.TwoWayEntry{"test2", 3},
+						db.TwoWayEntry{"test3", 4},
+					},
+				})
+			},
+		)
+	} else {
+		httpmock.RegisterResponder("POST", twoWayEndpoint+"/entries",
+			func(req *http.Request) (*http.Response, error) {
+				return httpmock.NewJsonResponse(500, map[string]interface{}{
+					"errors":  []string{"test"},
+					"entries": []db.TwoWayEntry{},
+				})
+			},
+		)
 	}
 }
+
+// func TestParse(t *testing.T) {
+// 	// mock out log.Fatalf
+// 	origLogFatalf := logFatalf
+// 	defer func() { logFatalf = origLogFatalf }()
+// 	errors := []string{}
+// 	logFatalf = func(format string, args ...interface{}) {
+// 		if len(args) > 0 {
+// 			errors = append(errors, fmt.Sprintf(format, args))
+// 		} else {
+// 			errors = append(errors, format)
+// 		}
+// 	}
+// 	testTable := []struct {
+// 		name                   string
+// 		filePath               string
+// 		expectedNumberOfErrors int
+// 	}{
+// 		{"file does not exist", "./sdfsdf.txt", 1},
+// 	}
+// 	for _, tc := range testTable {
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			errors = []string{}
+// 			Parse(tc.filePath)
+// 			assert.Equal(t, tc.expectedNumberOfErrors, len(errors))
+// 		})
+// 	}
+// }
 
 func TestIndexWords(t *testing.T) {
 	simpleFile, err := os.Open("./data/simple.txt")
@@ -42,13 +84,16 @@ func TestIndexWords(t *testing.T) {
 	}
 
 	testTable := []struct {
-		Name          string
-		file          *os.File
-		expectedError string
+		Name               string
+		file               *os.File
+		expectedError      string
+		successfulResponse bool
 	}{
-		{"reads all words in correctly", simpleFile, ""},
+		{"reads all words in correctly", simpleFile, "", true},
 	}
 	for _, tc := range testTable {
+		_mockOutCalls(tc.successfulResponse)
+		defer httpmock.DeactivateAndReset()
 		err := indexWords(tc.file)
 		if err != nil {
 			assert.Equal(t, tc.expectedError, err.Error())
