@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/dgoldstein1/crawler/db"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -26,13 +29,21 @@ func _mockOutCalls(success bool) {
 		// mock out metadata call
 		httpmock.RegisterResponder("POST", twoWayEndpoint+"/entries",
 			func(req *http.Request) (*http.Response, error) {
+				defer req.Body.Close()
+				body, err := ioutil.ReadAll(req.Body)
+				if err != nil {
+					panic(err)
+				}
+				words := []string{}
+				err = json.Unmarshal(body, &words)
+				if err != nil {
+					panic(err)
+				}
 				return httpmock.NewJsonResponse(200, map[string]interface{}{
 					"errors": []string{"test"},
 					"entries": []db.TwoWayEntry{
-						db.TwoWayEntry{"test", 1},
-						db.TwoWayEntry{"test1", 2},
-						db.TwoWayEntry{"test2", 3},
-						db.TwoWayEntry{"test3", 4},
+						db.TwoWayEntry{words[0], 1},
+						db.TwoWayEntry{words[1], 1},
 					},
 				})
 			},
@@ -49,33 +60,33 @@ func _mockOutCalls(success bool) {
 	}
 }
 
-// func TestParse(t *testing.T) {
-// 	// mock out log.Fatalf
-// 	origLogFatalf := logFatalf
-// 	defer func() { logFatalf = origLogFatalf }()
-// 	errors := []string{}
-// 	logFatalf = func(format string, args ...interface{}) {
-// 		if len(args) > 0 {
-// 			errors = append(errors, fmt.Sprintf(format, args))
-// 		} else {
-// 			errors = append(errors, format)
-// 		}
-// 	}
-// 	testTable := []struct {
-// 		name                   string
-// 		filePath               string
-// 		expectedNumberOfErrors int
-// 	}{
-// 		{"file does not exist", "./sdfsdf.txt", 1},
-// 	}
-// 	for _, tc := range testTable {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			errors = []string{}
-// 			Parse(tc.filePath)
-// 			assert.Equal(t, tc.expectedNumberOfErrors, len(errors))
-// 		})
-// 	}
-// }
+func TestParse(t *testing.T) {
+	// mock out log.Fatalf
+	origLogFatalf := logFatalf
+	defer func() { logFatalf = origLogFatalf }()
+	errors := []string{}
+	logFatalf = func(format string, args ...interface{}) {
+		if len(args) > 0 {
+			errors = append(errors, fmt.Sprintf(format, args))
+		} else {
+			errors = append(errors, format)
+		}
+	}
+	testTable := []struct {
+		name                   string
+		filePath               string
+		expectedNumberOfErrors int
+	}{
+		{"file does not exist", "./sdfsdf.txt", 1},
+	}
+	for _, tc := range testTable {
+		t.Run(tc.name, func(t *testing.T) {
+			errors = []string{}
+			Parse(tc.filePath)
+			assert.Equal(t, tc.expectedNumberOfErrors, len(errors))
+		})
+	}
+}
 
 func TestIndexWords(t *testing.T) {
 	simpleFile, err := os.Open("./data/simple.txt")
