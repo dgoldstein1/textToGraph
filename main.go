@@ -58,7 +58,7 @@ func main() {
 		{
 			Name:    "parse",
 			Aliases: []string{"p"},
-			Usage:   "parse all lines in text file",
+			Usage:   "parse all lines in text file and add each word to graph",
 			Action: func(c *cli.Context) error {
 				run()
 				return nil
