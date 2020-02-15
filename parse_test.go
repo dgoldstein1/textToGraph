@@ -65,11 +65,11 @@ func TestCleanWord(t *testing.T) {
 		expectedOutput string
 	}{
 		{"returns lowercase", "HELPME", "helpme"},
-		{"removes all non [a-b][0-9] chars", ".'42fjae2h", "42fjaeh"},
-		{"removes all non [a-b][0-9] chars (2)", ".'4@%*$)(@(#) ....2fjae2h", "42fjaeh"},
+		{"removes all non [a-b][0-9] chars", ".'42fjae2h", "42fjae2h"},
+		{"removes all non [a-b][0-9] chars (2)", ".'4@%*$)(@(#) ....2fjae2h", "42fjae2h"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, cleanWord(tc.word), tc.expectedOutput)
+			assert.Equal(t, tc.expectedOutput, cleanWord(tc.word))
 		})
 	}
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"os"
+	"regexp"
+	"strings"
 )
 
 func Parse(filePath string) {
@@ -28,8 +30,10 @@ func indexWords(file *os.File) error {
 }
 
 // cleans punctuation, capitalization, etc out of words
+var reg, _ = regexp.Compile("[^a-zA-Z0-9]+")
+
 func cleanWord(w string) string {
-	return w
+	return strings.ToLower(reg.ReplaceAllString(w, ""))
 }
 
 // adds neccesary nodes and edges to e
