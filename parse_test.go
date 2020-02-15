@@ -57,3 +57,19 @@ func TestIndexWords(t *testing.T) {
 		}
 	}
 }
+
+func TestCleanWord(t *testing.T) {
+	for _, tc := range []struct {
+		name           string
+		word           string
+		expectedOutput string
+	}{
+		{"returns lowercase", "HELPME", "helpme"},
+		{"removes all non [a-b][0-9] chars", ".'42fjae2h", "42fjaeh"},
+		{"removes all non [a-b][0-9] chars (2)", ".'4@%*$)(@(#) ....2fjae2h", "42fjaeh"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, cleanWord(tc.word), tc.expectedOutput)
+		})
+	}
+}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 )
 
@@ -23,9 +22,14 @@ func indexWords(file *os.File) error {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		cleanWord(scanner.Text())
 	}
 	return nil
+}
+
+// cleans punctuation, capitalization, etc out of words
+func cleanWord(w string) string {
+	return w
 }
 
 // adds neccesary nodes and edges to e
