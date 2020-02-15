@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	
+
 	"os"
 	"testing"
 )
@@ -40,9 +40,6 @@ func TestParseEnv(t *testing.T) {
 		"GRAPH_DB_ENDPOINT",
 		"MAX_APPROX_NODES",
 		"TWO_WAY_KV_ENDPOINT",
-		"METRICS_PORT",
-		"PARALLELISM",
-		"MS_DELAY",
 	}
 
 	for _, v := range requiredEnvs {
