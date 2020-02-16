@@ -1,10 +1,10 @@
-# textToGraph
+# crawler
 
-CLI which parses and delimintates text files by word, and then indexes into [big-data graph DB](https://github.com/dgoldstein1/graphApi).
+Script to crawl html and add href links, crawling and indexing 5k sites / second into [big-data graph DB](https://github.com/dgoldstein1/graphApi).
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/a4ef2145f63cb5ec881b/maintainability)](https://codeclimate.com/github/dgoldstein1/textToGraph/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/a4ef2145f63cb5ec881b/test_coverage)](https://codeclimate.com/github/dgoldstein1/textToGraph/test_coverage)
-[![CircleCI](https://circleci.com/gh/dgoldstein1/textToGraph.svg?style=svg)](https://circleci.com/gh/dgoldstein1/textToGraph)
+![Maintainability]
+![Test Coverage]
+![CircleCI]
 
 ## Build it
 
@@ -31,6 +31,7 @@ or with dependencies running locally
 ```sh
 export GRAPH_DB_ENDPOINT="http://localhost:5000" # endpoint of graph database
 export TWO_WAY_KV_ENDPOINT="http://localhost:5001" # endpoint of k:v <-> v:k 
+export MAX_APPROX_NODES=1000 # approximate number of nodes to visit (+/- one order of magnitude), set to '-1' for unlimited pars
 textToGraph parse ./documents/moby_dick.txt
 ```
 
