@@ -62,7 +62,7 @@ jobs:
           name : "Push results to code coverage (master only)"
           command : |
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
-              export CC_TEST_REPORTER_ID=d43bf52d0ac2724c201048cc4ecfa00c3bcab7987d01959991419e9cc85e635f
+              export CC_TEST_REPORTER_ID=60ba25b8c0573f3097c70a5eca572f17fee12379cc9a64048dc5bbc8bcd42fc6
               curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
               chmod +x ./cc-test-reporter
               ./cc-test-reporter format-coverage ./coverage.out -t gocov
@@ -98,9 +98,9 @@ jobs:
           command : |
               export $(cat VERSION | xargs)
               docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-              docker build . -t dgoldstein1/textToGraph:$VERSION -t dgoldstein1/textToGraph:latest
-              docker push dgoldstein1/textToGraph:$VERSION
-              docker push dgoldstein1/textToGraph:latest
+              docker build . -t dgoldstein1/textToGraph:$VERSION -t dgoldstein1/texttograph:latest
+              docker push dgoldstein1/texttograph:$VERSION
+              docker push dgoldstein1/texttograph:latest
 
   # publish github release with binary
   publish-github-release:

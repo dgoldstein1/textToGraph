@@ -5,7 +5,7 @@ ENV GOBIN $GOPATH/bin
 ENV PATH $GOBIN:/usr/local/go/bin:$PATH
 
 COPY build $GOBIN
-RUN crawler --version
+RUN textToGraph --version
 
 COPY LICENSE /LICENSE
 COPY VERSION /VERSION
