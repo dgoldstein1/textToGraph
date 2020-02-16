@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+var nodeToNeighbors = map[string][]string{}
+var maxLenBeforeDump = 10000000
+
 func Parse(filePath string) {
 	logMsg("reading in file %s", filePath)
 	// open file
@@ -20,7 +23,8 @@ func Parse(filePath string) {
 }
 
 // scan each word in file, adding edge for word -> word[i+1]
-func indexWords(file *os.File) error {
+// logs errors on failures
+func indexWords(file *os.File) {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanWords)
@@ -29,14 +33,31 @@ func indexWords(file *os.File) error {
 		nextWord = cleanWord(scanner.Text())
 		// add edge if there is one
 		if currWord != "" {
-			if err := addEdge(currWord, nextWord); err != nil {
-				logErrorf("could not add edge %s to %s: %v", currWord, nextWord, err)
-			}
+			// add to big map
+			nodeToNeighbors[currWord] = append(nodeToNeighbors[currWord], nextWord)
 		}
 		// update words
 		currWord = nextWord
+		// dump map if too large
+		if len(nodeToNeighbors) > maxLenBeforeDump {
+			dumpMap()
+		}
 	}
-	return nil
+	// dump map at end to remove remaining
+	dumpMap()
+}
+
+// dumps all nodeToNeighbors into back end
+func dumpMap() {
+	logMsg("dumping %v nodes to back end", len(nodeToNeighbors))
+	// add each edge for each neighbor
+	for n, neighbors := range nodeToNeighbors {
+		if err := addEdge(n, neighbors); err != nil {
+			logErrorf("could not add edge %s to %v: %v", n, neighbors, err)
+		}
+	}
+	// reset in local memory
+	nodeToNeighbors = map[string][]string{}
 }
 
 var reg, _ = regexp.Compile("[^a-zA-Z0-9]+")
@@ -47,10 +68,11 @@ func cleanWord(w string) string {
 }
 
 // adds neccesary nodes and edges to e
-func addEdge(currWord string, nextWord string) error {
+func addEdge(currWord string, neighbors []string) error {
+	logMsg("adding edge: %s --> %v neighbors", currWord, len(neighbors))
 	_, err := db.AddEdgesIfDoNotExist(
 		currWord,
-		[]string{nextWord},
+		neighbors,
 		cleanWord,
 		"",
 	)

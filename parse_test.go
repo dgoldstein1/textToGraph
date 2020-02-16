@@ -40,9 +40,9 @@ func _mockOutCalls() {
 				panic(err)
 			}
 			errors := []string{}
-			entries := []db.TwoWayEntry{
-				db.TwoWayEntry{words[0], 1},
-				db.TwoWayEntry{words[1], 1},
+			entries := []db.TwoWayEntry{}
+			for _, w := range words {
+				entries = append(entries, db.TwoWayEntry{w, 1})
 			}
 			if words[0] == "badresponse" {
 				entries = []db.TwoWayEntry{}
@@ -101,6 +101,7 @@ func TestIndexWords(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	simpleFile, _ := os.Open("./data/simple.txt")
+	simpleLongFile, _ := os.Open("./data/simpleFileLong.txt")
 	badResponse, _ := os.Open("./data/badResponse.txt")
 
 	testTable := []struct {
@@ -109,10 +110,14 @@ func TestIndexWords(t *testing.T) {
 		lenexpectedError int
 	}{
 		{"reads all words in correctly", simpleFile, 0},
+		{"dumps local cache if reaches maxLenBeforeDump", simpleLongFile, 0},
 		{"unsuccessful response from back end", badResponse, 1},
 	}
 	for _, tc := range testTable {
 		t.Run(tc.Name, func(t *testing.T) {
+			if tc.Name == "dumps local cache if reaches maxLenBeforeDump" {
+				maxLenBeforeDump = 5
+			}
 			_mockOutCalls()
 			errors = []string{}
 			indexWords(tc.file)
