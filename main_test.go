@@ -38,6 +38,7 @@ func TestParseEnv(t *testing.T) {
 
 	requiredEnvs := []string{
 		"GRAPH_DB_ENDPOINT",
+		"MAX_APPROX_NODES",
 		"TWO_WAY_KV_ENDPOINT",
 	}
 
@@ -65,4 +66,22 @@ func TestParseEnv(t *testing.T) {
 		assert.Equal(t, 1, len(errors))
 	})
 
+	t.Run("fails if MAX_APPROX_NODES is not valid int", func(t *testing.T) {
+		errors = []string{}
+		os.Setenv("MAX_APPROX_NODES", "f232")
+		parseEnv("test")
+		assert.Equal(t, 2, len(errors))
+	})
+	t.Run("fails if MAX_APPROX_NODES is not a positive int", func(t *testing.T) {
+		errors = []string{}
+		os.Setenv("MAX_APPROX_NODES", "-253")
+		parseEnv("test")
+		assert.Equal(t, 1, len(errors))
+	})
+	t.Run("throws no errors if MAX_APPROX_NODES is '-1'", func(t *testing.T) {
+		errors = []string{}
+		os.Setenv("MAX_APPROX_NODES", "-1")
+		parseEnv("test")
+		assert.Equal(t, 0, len(errors))
+	})
 }
