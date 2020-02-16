@@ -69,6 +69,7 @@ func cleanWord(w string) string {
 
 // adds neccesary nodes and edges to e
 func addEdge(currWord string, neighbors []string) error {
+	logMsg("adding edge: %s --> %v neighbors", currWord, len(neighbors))
 	_, err := db.AddEdgesIfDoNotExist(
 		currWord,
 		neighbors,
