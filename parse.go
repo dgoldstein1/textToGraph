@@ -23,7 +23,8 @@ func Parse(filePath string) {
 }
 
 // scan each word in file, adding edge for word -> word[i+1]
-func indexWords(file *os.File) error {
+// logs errors on failures
+func indexWords(file *os.File) {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanWords)
@@ -44,7 +45,6 @@ func indexWords(file *os.File) error {
 	}
 	// dump map at end to remove remaining
 	dumpMap()
-	return nil
 }
 
 // dumps all nodeToNeighbors into back end
