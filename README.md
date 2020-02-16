@@ -2,9 +2,9 @@
 
 Script to crawl html and add href links, crawling and indexing 5k sites / second into [big-data graph DB](https://github.com/dgoldstein1/graphApi).
 
-![Maintainability]
-![Test Coverage]
-![CircleCI]
+[![Maintainability](https://api.codeclimate.com/v1/badges/a4ef2145f63cb5ec881b/maintainability)](https://codeclimate.com/github/dgoldstein1/textToGraph/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a4ef2145f63cb5ec881b/test_coverage)](https://codeclimate.com/github/dgoldstein1/textToGraph/test_coverage)
+[![CircleCI](https://circleci.com/gh/dgoldstein1/textToGraph.svg?style=svg)](https://circleci.com/gh/dgoldstein1/textToGraph)
 
 ## Build it
 
