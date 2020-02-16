@@ -9,7 +9,7 @@ import (
 )
 
 var nodeToNeighbors = map[string][]string{}
-var maxLenBeforeDump = 100000
+var maxLenBeforeDump = 10000000
 
 func Parse(filePath string) {
 	logMsg("reading in file %s", filePath)
@@ -49,6 +49,7 @@ func indexWords(file *os.File) {
 
 // dumps all nodeToNeighbors into back end
 func dumpMap() {
+	logMsg("dumping %v nodes to back end", len(nodeToNeighbors))
 	// add each edge for each neighbor
 	for n, neighbors := range nodeToNeighbors {
 		if err := addEdge(n, neighbors); err != nil {
