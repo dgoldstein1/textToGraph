@@ -101,7 +101,8 @@ func TestIndexWords(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	simpleFile, _ := os.Open("./data/simple.txt")
-	// badResponse, _ := os.Open("./data/badResponse.txt")
+	simpleLongFile, _ := os.Open("./data/simpleFileLong.txt")
+	badResponse, _ := os.Open("./data/badResponse.txt")
 
 	testTable := []struct {
 		Name             string
@@ -109,10 +110,14 @@ func TestIndexWords(t *testing.T) {
 		lenexpectedError int
 	}{
 		{"reads all words in correctly", simpleFile, 0},
-		// {"unsuccessful response from back end", badResponse, 1},
+		{"dumps local cache if reaches maxLenBeforeDump", simpleLongFile, 0},
+		{"unsuccessful response from back end", badResponse, 1},
 	}
 	for _, tc := range testTable {
 		t.Run(tc.Name, func(t *testing.T) {
+			if tc.Name == "dumps local cache if reaches maxLenBeforeDump" {
+				maxLenBeforeDump = 5
+			}
 			_mockOutCalls()
 			errors = []string{}
 			indexWords(tc.file)
