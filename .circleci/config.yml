@@ -98,7 +98,7 @@ jobs:
           command : |
               export $(cat VERSION | xargs)
               docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-              docker build . -t dgoldstein1/textToGraph:$VERSION -t dgoldstein1/texttograph:latest
+              docker build . -t dgoldstein1/texttograph:$VERSION -t dgoldstein1/texttograph:latest
               docker push dgoldstein1/texttograph:$VERSION
               docker push dgoldstein1/texttograph:latest
 
