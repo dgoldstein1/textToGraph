@@ -22,7 +22,7 @@ func _mockOutCalls() {
 
 	httpmock.RegisterResponder("POST", dbEndpoint+"/edges?node=1",
 		func(req *http.Request) (*http.Response, error) {
-			return httpmock.NewJsonResponse(200, map[string]interface{}{"neighborsAdded": []int{2, 3, 4}})
+			return httpmock.NewJsonResponse(200, map[string]interface{}{"neighborsAdded": []string{"2", "3", "4"}})
 		},
 	)
 

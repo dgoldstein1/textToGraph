@@ -38,26 +38,26 @@ services:
       - 5001:5001
 
     environment:
-      - USE_S3=true
+      - USE_S3=false
       - AWS_DEFAULT_REGION=us-east-1
-      - AWS_SECRET_ACCESS_KEY=
-      - AWS_ACCESS_KEY_ID=
-      - AWS_KV_PATH=s3://links-deployment/counties/twowaykv/counties
-      - AWS_SYNC_DIRECTORY=s3://links-deployment/counties/twowaykv/counties
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_KV_PATH=
+      - AWS_SYNC_DIRECTORY=s3://links-deployment/moby/twowaykv
       - GRAPH_DB_STORE_DIR=/db/twowaykv
-      - SAVE_INTERVAL=120
+      - SAVE_INTERVAL=10
 
   graph:
-    image: dgoldstein1/biggraph:1.0.2
+    image: dgoldstein1/biggraph:2.0.1
     ports:
       - 5000:5000
       - 8001:8001
     environment:
-      - GRAPH_SAVE_INTERVAL=60
-      - AWS_ACCESS_KEY_ID=
+      - GRAPH_SAVE_INTERVAL=10
+      - AWS_ACCESS_KEY_ID
       - AWS_DEFAULT_REGION=us-east-1
-      - AWS_GRAPH_PATH=s3://links-deployment/counties/biggraph/counties.graph
-      - AWS_SECRET_ACCESS_KEY=
-      - AWS_SYNC_DIRECTORY=s3://links-deployment/counties/biggraph
-      - GRAPH_SAVE_PATH=/data/counties.graph
-      - USE_S3=true
+      - AWS_GRAPH_PATH=
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SYNC_DIRECTORY=s3://links-deployment/moby/biggraph
+      - GRAPH_SAVE_PATH=/data/moby.graph
+      - USE_S3=false
