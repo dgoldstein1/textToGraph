@@ -8,7 +8,7 @@ services:
 
 
   links:
-    image: dgoldstein1/links:1.3.1
+    image: dgoldstein1/links:2.2.0
     labels:
       kompose.service.type: loadbalancer
       kompose.service.expose: "true"
@@ -27,10 +27,9 @@ services:
       - twowaykv_incoming_path=/services/twowaykv/
       - twowaykv_outgoing_url=http://kv:5001
       - wikipedia_incoming_path=/services/wiki/
-      - wikipedia_outgoing_url=https://ar.wikipedia.org
-    depends_on:
-      - kv
-      - graph
+      - wikipedia_outgoing_url=https://en.wikipedia.org
+    volumes:
+      - ./links-config.json:/static-files/config.json
 
   kv:
     image: dgoldstein1/twowaykv:1.0.1

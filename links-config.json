@@ -1,0 +1,10 @@
+{
+  "supportedGraphs": [
+    {
+      "name": "Moby Dick",
+      "graphEndpoint": "/services/biggraph",
+      "kvEndpoint": "/services/twowaykv",
+      "lookupEndpoint": "/services/wiki"
+    }
+  ]
+}
