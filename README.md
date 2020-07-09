@@ -29,9 +29,9 @@ docker-compose up -d
 or with dependencies running locally
 
 ```sh
-export GRAPH_DB_ENDPOINT="http://localhost:5000" # endpoint of graph database
-export TWO_WAY_KV_ENDPOINT="http://localhost:5001" # endpoint of k:v <-> v:k 
-textToGraph parse ./documents/moby_dick.txt
+export GRAPH_DB_ENDPOINT="http://localhost:8443/services/biggraph" # endpoint of graph database
+export TWO_WAY_KV_ENDPOINT="http://localhost:8443/services/twowaykv" # endpoint of k:v <-> v:k 
+./textToGraph parse data/moby_dick.txt
 ```
 
 ## Development
