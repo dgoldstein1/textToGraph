@@ -12,8 +12,8 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-      - READ_S3=true
+      - READ_S3=false
       - WRITE_S3=true
-      - AWS_SYNC_DIRECTORY=s3://links-deployment-dev/deployment/moby/
+      - AWS_SYNC_DIRECTORY=s3://links-deployment-dev/deployment/little-women/
       - GRAPH_SAVE_INTERVAL=30
       - PORT=8443
